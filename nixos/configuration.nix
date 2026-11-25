@@ -8,70 +8,72 @@
   imports =
     [ # Include the results of the hardware scan.
       ./hardware-configuration.nix
+      ./packages.nix
+      ./bash.nix
     ];
 
+  #Not for me
+  
+
+  security.sudo.wheelNeedsPassword = false;
 
   networking.hostName = "nixos"; # Define your hostname.
-  # networking.wireless.enable = true;  # Enables wireless support via wpa_supplicant.
+  
+  #Window manager
   programs.hyprland = {
       enable = true;
       withUWSM = true; # recommended for most users
       xwayland.enable = true; # Xwayland can be disabled.
   };
-
   xdg.portal = {
     	enable = true;
     	extraPortals = with pkgs; [ xdg-desktop-portal-hyprland ];
   };
-
   services.xserver.enable = true;
   services.displayManager = {
-                sddm.enable = true;
-  sddm.wayland.enable = true;
-        };
+         sddm.enable = true;
+         sddm.wayland.enable = true;
+  };
   boot = {
     loader = {
       efi.canTouchEfiVariables = true;
       systemd-boot.enable = false;
       timeout = 1;
       grub = {
-    enable = true;
-    device = "nodev";
-    efiSupport = true;
-  };
-  };
- 
-
-  plymouth = {
-    enable = true;
-    theme = "spinfinity";
-  };
+        enable = true;
+        device = "nodev";
+        efiSupport = true;
+      };
+    };
+    plymouth = {
+      enable = false;
+      theme = "spinfinity";
+    };
   };
 
- hardware.graphics = {
-    enable = true;
-    enable32Bit = true; # Recommended for Steam and 32-bit apps
-  };
- services.xserver.videoDrivers = [ "nvidia" ];
- hardware.nvidia = {
-    # Required for RTX 50-series (Blackwell) GPUs
-    open = true;
+  #NVIDIA
+#   hardware.graphics = {
+#    enable = true;
+#    enable32Bit = true; # Recommended for Steam and 32-bit apps
+#   };
+#   services.xserver.videoDrivers = [ "nvidia" ];
+#   hardware.nvidia = {
+#     # Required for RTX 50-series (Blackwell) GPUs
+#     open = true;
 
-    # Required for Wayland compositors
-    modesetting.enable = true;
+     # Required for Wayland compositors
+#     modesetting.enable = true;
 
-    # Enable the nvidia-settings control panel
-    nvidiaSettings = true;
+     # Enable the nvidia-settings control panel
+ #    nvidiaSettings = true;
 
-    # Use the standard stable driver branch
-    package = config.boot.kernelPackages.nvidiaPackages.latest;
-  };
-    boot.kernelParams = [ "nvidia_drm.fbdev=0" ];
+     # Use the standard stable driver branch
+#     package = config.boot.kernelPackages.nvidiaPackages.latest;
+#   };
+   # boot.kernelParams = [ "nvidia_drm.fbdev=0" ];
     # Load NVIDIA modules early to prevent display manager race conditions
-    boot.initrd.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
-  # Configure network proxy if necessary
-  # networking.proxy.default = "http://user:password@proxy:port/";
-  # networking.proxy.noProxy = "127.0.0.1,localhost,internal.domain";
+   # boot.initrd.kernelModules = [ "nvidia" "nvidia_modeset" "nvidia_uvm" "nvidia_drm" ];
+
 
   # Enable networking
   networking.networkmanager.enable = true;
@@ -92,22 +94,13 @@
     LC_PAPER = "en_US.UTF-8";
     LC_TELEPHONE = "en_US.UTF-8";
     LC_TIME = "en_US.UTF-8";
-  };
-
-  # Enable the X11 windowing system.
-  # You can disable this if you're only using the Wayland session.
-
-  # Enable the KDE Plasma Desktop Environment.
- 
+  }; 
 
   # Configure keymap in X11
   services.xserver.xkb = {
     layout = "us";
     variant = "";
   };
-
-  # Enable CUPS to print documents.
-  services.printing.enable = true;
 
   # Enable sound with pipewire.
   services.pulseaudio.enable = false;
@@ -117,16 +110,8 @@
     alsa.enable = true;
     alsa.support32Bit = true;
     pulse.enable = true;
-    # If you want to use JACK applications, uncomment this
-    #jack.enable = true;
-
-    # use the example session manager (no others are packaged yet so this is enabled by default,
-    # no need to redefine it in your config for now)
-    #media-session.enable = true;
   };
 
-  # Enable touchpad support (enabled default in most desktopManager).
-  # services.xserver.libinput.enable = true;
 
   # Define a user account. Don't forget to set a password with ‘passwd’.
   users.users.fruitsnacks = {
@@ -146,47 +131,13 @@
   # Install firefox.
   programs.firefox.enable = true;
   #programs.steam.enable = true;
-  # Allow unfree packages
-  nixpkgs.config.allowUnfree = true;
 
-  # List packages installed in system profile. To search, run:
-  # $ nix search wget
-  environment.systemPackages = with pkgs; [
-   # vim # Do not forget to add an editor to edit configuration.nix! The Nano editor is also installed by default.
-	wayland
-	git
-	neovim
-	vesktop
-	steam
-	waybar
-	kitty
-	home-manager
-	libreoffice-fresh
-	lsd
-	dtrx
-	sioyek
-	jdk17
-	python3
-	vite
-	openjdk
-	#awww
-	exercism
-	live-server
-	maven
-	gradle
-	spring-boot-cli
-	#postgresql
-	rofi
-	
-  ]; 
   #Some programs need SUID wrappers, can be configured further or are
   # started in user sessions.
   # programs.mtr.enable = true;
   # programs.gnupg.agent = {  #   enable = true;
   #   enableSSHSupport = true;
   # };
-
-  # List services that you want to enable:
 
   # Enable the OpenSSH daemon.
   # services.openssh.enable = true;
